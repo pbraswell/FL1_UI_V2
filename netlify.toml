@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = ".next"
 
-# Use @netlify/plugin-nextjs
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+    # Force the Netlify Next.js plugin to use serverless mode
+    # This is crucial for Clerk authentication which relies on React context
+    useServerlessTraceTarget = true

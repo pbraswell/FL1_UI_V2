@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // For Netlify compatibility
-  trailingSlash: true,
   // Skip type checking in build
   typescript: {
     ignoreBuildErrors: true,
@@ -11,15 +9,13 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Keep standard distDir
-  distDir: '.next',
   // Support Clerk authentication
   images: {
     domains: ['img.clerk.com'],
     unoptimized: true,
   },
-  // Critical for Netlify + Next.js + Clerk compatibility
-  output: 'standalone',
+  // Do NOT use export mode - use server components instead
+  // This solves the HTML import error and React context issues
 };
 
 module.exports = nextConfig;
