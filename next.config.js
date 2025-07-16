@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
   // For Netlify compatibility
   trailingSlash: true,
   // Skip type checking in build
@@ -15,7 +16,10 @@ const nextConfig = {
   // Support Clerk authentication
   images: {
     domains: ['img.clerk.com'],
-  }
+    unoptimized: true,
+  },
+  // Critical for Netlify + Next.js + Clerk compatibility
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
