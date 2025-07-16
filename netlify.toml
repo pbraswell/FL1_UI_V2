@@ -1,29 +1,22 @@
 [build]
-  command = "npm run build"
+  command = "CI=false npm run build"
   publish = ".next"
+  ignore = "git diff --quiet HEAD^ HEAD -- ."
 
 [build.environment]
-  NEXT_USE_NETLIFY_EDGE = "true"
-  NEXT_FORCE_EDGE_IMAGES = "true"
+  NETLIFY = "true"
+  NODE_VERSION = "18"
 
-[functions]
-  directory = "netlify/functions"
+# Disable automatic static HTML generation for 404/500 pages
+[build.processing]
+  skip_processing = true
 
+# Use @netlify/plugin-nextjs without any extra processing
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-[dev]
-  command = "next dev"
-  targetPort = 3000
-
-# Disable asset optimization for faster builds
-[build.processing.css]
-  bundle = false
-  minify = false
-[build.processing.js]
-  bundle = false
-  minify = false
-[build.processing.html]
-  pretty_urls = true
-[build.processing.images]
-  compress = false
+  [plugins.inputs]
+    skipBuildLogs = "true"
+    # Force serverless mode
+    useServerlessFunctions = "true"
+    # Skip static HTML generation
+    generateStaticRoutes = "false"
