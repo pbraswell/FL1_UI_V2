@@ -14,10 +14,10 @@ const nextConfig = {
     domains: ['img.clerk.com'],
     unoptimized: true,
   },
-  // Standard settings for Next.js on Netlify
+  // Disable static export to force server rendering
+  // This is critical for compatibility with Clerk's React context
   distDir: '.next',
-  // Ensure we're NOT using static export which causes HTML import errors
-  // The Netlify Next.js plugin will handle SSR appropriately
+  // Explicitly configure Clerk URLs
   env: {
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: '/sign-in',
     NEXT_PUBLIC_CLERK_SIGN_UP_URL: '/sign-up',

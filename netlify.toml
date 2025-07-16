@@ -1,6 +1,12 @@
 [build]
-  command = "npm run build"
+  command = "NODE_OPTIONS='--max_old_space_size=4096' npm run build"
   publish = ".next"
+
+# Explicitly set environment variables to control Next.js behavior
+[build.environment]
+  NEXT_DISABLE_SOURCEMAPS = "true"
+  NEXT_TELEMETRY_DISABLED = "1"
+  NODE_ENV = "production"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
