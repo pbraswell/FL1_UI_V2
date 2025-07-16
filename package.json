@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.0",
+    "autoprefixer": "^10.4.16",
     "next": "^14.2.3",
+    "postcss": "^8.4.32",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.0"
   },
   "devDependencies": {
     "@netlify/next": "^1.4.9",
@@ -20,9 +23,6 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32",
-    "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }
 }
