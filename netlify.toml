@@ -1,15 +1,6 @@
 [build]
-  command = "CI=false npm run build"
+  command = "npm run build"
   publish = ".next"
-  ignore = "git diff --quiet HEAD^ HEAD -- ."
-
-[build.environment]
-  NETLIFY = "true"
-  NODE_VERSION = "18"
-
-# Disable automatic static HTML generation for 404/500 pages
-[build.processing]
-  skip_processing = true
 
 # Use @netlify/plugin-nextjs
 [[plugins]]

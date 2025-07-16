@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.0",
-    "next": "^15.4.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "next": "^14.2.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@netlify/next": "^1.4.9",

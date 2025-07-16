@@ -2,9 +2,6 @@
 const nextConfig = {
   // For Netlify compatibility
   trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
   // Skip type checking in build
   typescript: {
     ignoreBuildErrors: true,
@@ -13,8 +10,12 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Disable the automatic 404/500 pages since those are causing the Html error
+  // Keep standard distDir
   distDir: '.next',
+  // Support Clerk authentication
+  images: {
+    domains: ['img.clerk.com'],
+  }
 };
 
 module.exports = nextConfig;
