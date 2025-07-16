@@ -12,9 +12,9 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
+    <html lang="en">
+      <body className={inter.className}>
+        <ClerkProvider>
           <header className="flex justify-between items-center px-6 py-4 border-b">
             <h1 className="text-xl font-bold">🛫 Flight Level One</h1>
             <SignedIn>
@@ -22,8 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SignedIn>
           </header>
           <main className="p-6">{children}</main>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
