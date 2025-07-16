@@ -14,8 +14,16 @@ const nextConfig = {
     domains: ['img.clerk.com'],
     unoptimized: true,
   },
-  // Do NOT use export mode - use server components instead
-  // This solves the HTML import error and React context issues
+  // Standard settings for Next.js on Netlify
+  distDir: '.next',
+  // Ensure we're NOT using static export which causes HTML import errors
+  // The Netlify Next.js plugin will handle SSR appropriately
+  env: {
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: '/sign-in',
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: '/sign-up',
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: '/',
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: '/',
+  }
 };
 
 module.exports = nextConfig;
