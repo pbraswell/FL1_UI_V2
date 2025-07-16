@@ -2,8 +2,28 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  NEXT_USE_NETLIFY_EDGE = "true"
+  NEXT_FORCE_EDGE_IMAGES = "true"
+
 [functions]
   directory = "netlify/functions"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[dev]
+  command = "next dev"
+  targetPort = 3000
+
+# Disable asset optimization for faster builds
+[build.processing.css]
+  bundle = false
+  minify = false
+[build.processing.js]
+  bundle = false
+  minify = false
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = false
