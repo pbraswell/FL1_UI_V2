@@ -3,7 +3,12 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+// Use Next.js 14 compatible font configuration
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata = {
   title: "Flight Level One",
