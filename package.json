@@ -5,18 +5,18 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "postbuild": "netlify-next",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.0",
-    "@netlify/next": "^1.4.9",
     "next": "^15.4.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@netlify/next": "^1.4.9",
+    "@netlify/plugin-nextjs": "^5.11.6",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
