@@ -11,12 +11,6 @@
 [build.processing]
   skip_processing = true
 
-# Use @netlify/plugin-nextjs without any extra processing
+# Use @netlify/plugin-nextjs
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-  [plugins.inputs]
-    skipBuildLogs = "true"
-    # Force serverless mode
-    useServerlessFunctions = "true"
-    # Skip static HTML generation
-    generateStaticRoutes = "false"
