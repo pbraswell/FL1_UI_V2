@@ -5,5 +5,3 @@
 [functions]
   directory = "netlify/functions"
 
-[[plugins]]
-  package = "@netlify/next"
