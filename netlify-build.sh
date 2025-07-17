@@ -54,6 +54,10 @@ EOL
 echo "Installing all dependencies..."
 npm ci
 
+# Explicitly install TypeScript and type definitions
+echo "Explicitly installing TypeScript dependencies..."
+npm install --no-save typescript@5 @types/react@18 @types/node@20 @types/react-dom@18
+
 # Install specific versions of required packages
 echo "Installing critical dependencies..."
 npm install --no-save tailwindcss@3.3.0 postcss@8.4.32 autoprefixer@10.4.16
