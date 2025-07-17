@@ -1,24 +1,19 @@
 [build]
   command = "./netlify-build.sh"
-  publish = ".next/standalone"
-  functions = ".next/server"
+  publish = ".next/standalone/.next"
+  functions = "netlify/functions"
 
-# Plugin disabled due to persistent file not found errors
+# Disable plugin as it causes issues
 # [[plugins]]
 #   package = "@netlify/plugin-nextjs"
 
-# Handle Next.js routing
-[[redirects]]
-  from = "/_next/static/*"
-  to = "/_next/static/:splat"
-  status = 200
+# Essential environment variables
+[build.environment]
+  NODE_ENV = "production"
+  NEXT_TELEMETRY_DISABLED = "1"
 
-[[redirects]]
-  from = "/_next/data/*"
-  to = "/_next/data/:splat"
-  status = 200
-
+# Handle all routes
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server"
+  to = "/.netlify/functions/nextjs-server"
   status = 200

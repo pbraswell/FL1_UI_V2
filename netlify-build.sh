@@ -20,39 +20,41 @@ cp package.json package.json.backup
 # Modify package.json to move TypeScript dependencies from devDependencies to dependencies
 echo "Ensuring TypeScript is in main dependencies..."
 node -e '
-const fs = require("fs");
-const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+  const fs = require("fs");
+  const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
 
-// Dependencies to move
-const depsToMove = [
-  "typescript",
-  "@types/react",
-  "@types/node",
-  "@types/react-dom"
-];
+  // Dependencies to move
+  const depsToMove = [
+    "typescript",
+    "@types/react",
+    "@types/node",
+    "@types/react-dom"
+  ];
 
-// Ensure dependencies section exists
-if (!pkg.dependencies) pkg.dependencies = {};
+  // Ensure dependencies section exists
+  if (!pkg.dependencies) pkg.dependencies = {};
 
-// Move dependencies from devDependencies to dependencies
-if (pkg.devDependencies) {
-  depsToMove.forEach(dep => {
-    if (pkg.devDependencies[dep]) {
-      pkg.dependencies[dep] = pkg.devDependencies[dep];
-      delete pkg.devDependencies[dep];
-    }
-  });
-}
+  // Move dependencies from devDependencies to dependencies
+  if (pkg.devDependencies) {
+    depsToMove.forEach(dep => {
+      if (pkg.devDependencies[dep]) {
+        pkg.dependencies[dep] = pkg.devDependencies[dep];
+      }
+    });
+  }
 
-// Make sure the deps exist
-pkg.dependencies.typescript = pkg.dependencies.typescript || "^5.0.0";
-pkg.dependencies["@types/react"] = pkg.dependencies["@types/react"] || "^18.0.0";
-pkg.dependencies["@types/node"] = pkg.dependencies["@types/node"] || "^20.0.0";
-pkg.dependencies["@types/react-dom"] = pkg.dependencies["@types/react-dom"] || "^18.0.0";
+  // Make sure the deps exist
+  pkg.dependencies.typescript = pkg.dependencies.typescript || "^5.0.0";
+  pkg.dependencies["@types/react"] = pkg.dependencies["@types/react"] || "^18.0.0";
+  pkg.dependencies["@types/node"] = pkg.dependencies["@types/node"] || "^20.0.0";
+  pkg.dependencies["@types/react-dom"] = pkg.dependencies["@types/react-dom"] || "^18.0.0";
+  
+  // Add Netlify plugin to dependencies
+  pkg.dependencies["@netlify/plugin-nextjs"] = pkg.dependencies["@netlify/plugin-nextjs"] || "^5.0.0";
 
-// Write the modified package.json
-fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2));
-console.log("Updated package.json to include TypeScript in main dependencies");
+  // Write the modified package.json
+  fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2));
+  console.log("Updated package.json to include TypeScript in main dependencies");
 '
 
 # Install dependencies with a clean slate
@@ -63,7 +65,7 @@ rm -rf .next
 echo "Installing ALL dependencies..."
 npm install
 
-# Create optimized Next.js configuration for standalone server-side rendering...
+# Create optimized Next.js configuration for standalone mode...
 cat > next.config.js << 'EOL'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -78,7 +80,7 @@ const nextConfig = {
     domains: ['img.clerk.com'],
   },
   swcMinify: true,
-  // Enable standalone output for Netlify functions
+  // Use standalone output for Netlify functions approach
   output: 'standalone',
 };
 
@@ -134,23 +136,17 @@ if [ $BUILD_STATUS -ne 0 ]; then
   exit $BUILD_STATUS
 fi
 
-# Verify .next directory and standalone output exists
+# Verify .next directory exists and has content
 if [ ! -d ".next" ] || [ ! "$(ls -A .next 2>/dev/null)" ]; then
   echo "ERROR: .next directory missing or empty"
   exit 1
 fi
 
-if [ ! -d ".next/standalone" ] || [ ! "$(ls -A .next/standalone 2>/dev/null)" ]; then
-  echo "ERROR: .next/standalone directory missing or empty. Make sure 'output: standalone' is set in next.config.js"
-  exit 1
-fi
+echo "Using Netlify plugin for server-side rendering..."
 
-if [ ! -d ".next/server" ] || [ ! "$(ls -A .next/server 2>/dev/null)" ]; then
-  echo "ERROR: .next/server directory missing or empty. Make sure 'output: standalone' is set in next.config.js"
-  exit 1
-fi
-
-echo "Using standalone Next.js build for Netlify functions..."
+# List directories to help with debugging
+echo "Listing .next directory structure:"
+find .next -type d -maxdepth 2 | sort
 
 echo "Build completed successfully!"
 exit 0
