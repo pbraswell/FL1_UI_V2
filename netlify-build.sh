@@ -63,7 +63,7 @@ rm -rf .next
 echo "Installing ALL dependencies..."
 npm install
 
-# Create optimized Next.js configuration for server-side rendering...
+# Create optimized Next.js configuration for standalone server-side rendering...
 cat > next.config.js << 'EOL'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -78,6 +78,8 @@ const nextConfig = {
     domains: ['img.clerk.com'],
   },
   swcMinify: true,
+  // Enable standalone output for Netlify functions
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
@@ -132,14 +134,23 @@ if [ $BUILD_STATUS -ne 0 ]; then
   exit $BUILD_STATUS
 fi
 
-# Verify .next directory exists and has content
+# Verify .next directory and standalone output exists
 if [ ! -d ".next" ] || [ ! "$(ls -A .next 2>/dev/null)" ]; then
   echo "ERROR: .next directory missing or empty"
   exit 1
 fi
 
-# No need for redirects files with server-side rendering
-echo "Using server-side rendering with Netlify plugin, no redirects needed..."
+if [ ! -d ".next/standalone" ] || [ ! "$(ls -A .next/standalone 2>/dev/null)" ]; then
+  echo "ERROR: .next/standalone directory missing or empty. Make sure 'output: standalone' is set in next.config.js"
+  exit 1
+fi
+
+if [ ! -d ".next/server" ] || [ ! "$(ls -A .next/server 2>/dev/null)" ]; then
+  echo "ERROR: .next/server directory missing or empty. Make sure 'output: standalone' is set in next.config.js"
+  exit 1
+fi
+
+echo "Using standalone Next.js build for Netlify functions..."
 
 echo "Build completed successfully!"
 exit 0
