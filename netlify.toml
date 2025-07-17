@@ -2,7 +2,6 @@
   command = "./netlify-build.sh"
   publish = ".next"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-  [plugins.inputs]
-    # No additional inputs to avoid potential configuration conflicts
+# Plugin disabled because Next.js builds successfully without it
+# [[plugins]]
+#   package = "@netlify/plugin-nextjs"

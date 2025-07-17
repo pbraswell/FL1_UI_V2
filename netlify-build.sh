@@ -87,9 +87,8 @@ EOL
 # Do NOT create .babelrc as it conflicts with next/font
 echo "Skipping .babelrc creation to allow SWC to handle fonts..."
 
-# Install the Netlify plugin properly
-echo "Installing Netlify plugin properly..."
-npm install @netlify/plugin-nextjs@5.11.6 --save
+# Skip installing the Netlify plugin since we've disabled it in netlify.toml
+echo "Skipping Netlify plugin installation (disabled in netlify.toml)..."
 
 # Verify TypeScript is installed
 echo "Verifying TypeScript installation..."
