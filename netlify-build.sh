@@ -64,19 +64,16 @@ cat > next.config.js << 'EOL'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Completely disable TypeScript - for Netlify deploy only
-  typescript: {
-    ignoreBuildErrors: true,
-    tsconfigPath: false
-  },
-  // Skip ESLint during builds
+  swcMinify: false,
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Support Clerk authentication
+  typescript: {
+    ignoreBuildErrors: true,
+    // Remove tsconfigPath setting as it causes errors
+  },
   images: {
     domains: ['img.clerk.com'],
-    unoptimized: true,
   },
   // Explicitly configure Clerk URLs
   env: {
@@ -99,9 +96,13 @@ EOL
 echo "Installing all dependencies..."
 npm ci
 
-# Explicitly install TypeScript dependencies and Netlify plugin
+# Explicitly installing TypeScript and Netlify dependencies
 echo "Explicitly installing TypeScript and Netlify dependencies..."
-npm install --no-save typescript@5 @types/react@18 @types/node@20 @types/react-dom@18 @netlify/plugin-nextjs@5.11.6
+npm i typescript@5 @types/react@18 @types/node@20 @types/react-dom@18
+
+# Ensure the @netlify/plugin-nextjs is installed globally for Netlify build
+echo "Installing Netlify plugin explicitly..."
+npm i @netlify/plugin-nextjs@5.11.6 --no-save
 
 # Install specific versions of required packages
 echo "Installing critical dependencies..."
