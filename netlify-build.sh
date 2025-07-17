@@ -65,7 +65,7 @@ rm -rf .next
 echo "Installing ALL dependencies..."
 npm install
 
-# Create optimized Next.js configuration for standalone mode...
+# Create optimized Next.js configuration compatible with Netlify plugin...
 cat > next.config.js << 'EOL'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -78,10 +78,10 @@ const nextConfig = {
   },
   images: {
     domains: ['img.clerk.com'],
+    unoptimized: true, // Avoid image optimization issues
   },
   swcMinify: true,
-  // Use standalone output for Netlify functions approach
-  output: 'standalone',
+  // Do NOT use output: 'standalone' with Netlify plugin
 };
 
 module.exports = nextConfig;

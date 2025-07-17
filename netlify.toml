@@ -1,19 +1,12 @@
 [build]
   command = "./netlify-build.sh"
-  publish = ".next/standalone/.next"
-  functions = "netlify/functions"
+  publish = ".next"
 
-# Disable plugin as it causes issues
-# [[plugins]]
-#   package = "@netlify/plugin-nextjs"
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
-# Essential environment variables
 [build.environment]
   NODE_ENV = "production"
   NEXT_TELEMETRY_DISABLED = "1"
-
-# Handle all routes
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/nextjs-server"
-  status = 200
+  # Skip image optimization which can cause build issues
+  NEXT_DISABLE_IMAGE_OPTIMIZATION = "true"
