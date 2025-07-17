@@ -9,10 +9,9 @@ export NODE_ENV=production
 # Set Node options for more memory
 export NODE_OPTIONS="--max-old-space-size=4096"
 
-# Use Babel transpiler instead of SWC to avoid issues
-echo "Configuring to use Babel instead of SWC..."
-export DISABLE_SWC=1
-export SWCMINIFY=false
+# Allow SWC to handle Next.js font system
+echo "Configuring to use SWC for Next.js font support..."
+# DO NOT set DISABLE_SWC=1 as it conflicts with next/font
 
 # Create package.json backup
 echo "Creating package.json backup..."
@@ -79,18 +78,18 @@ const nextConfig = {
   images: {
     domains: ['img.clerk.com'],
   },
+  swcMinify: true,
 };
 
 module.exports = nextConfig;
 EOL
 
-# Create .babelrc to ensure proper transpilation
-echo "Creating .babelrc file..."
-cat > .babelrc << 'EOL'
-{
-  "presets": ["next/babel"]
-}
-EOL
+# Do NOT create .babelrc as it conflicts with next/font
+echo "Skipping .babelrc creation to allow SWC to handle fonts..."
+
+# Install the Netlify plugin properly
+echo "Installing Netlify plugin properly..."
+npm install @netlify/plugin-nextjs@5.11.6 --save
 
 # Verify TypeScript is installed
 echo "Verifying TypeScript installation..."
