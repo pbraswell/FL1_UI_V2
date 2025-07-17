@@ -2,11 +2,7 @@
   command = "./netlify-build.sh"
   publish = ".next"
 
-# Explicitly set environment variables to control Next.js behavior
-[build.environment]
-  NEXT_DISABLE_SOURCEMAPS = "true"
-  NEXT_TELEMETRY_DISABLED = "1"
-  NODE_ENV = "production"
-
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+    # No additional inputs to avoid potential configuration conflicts
