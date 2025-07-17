@@ -1,7 +1,7 @@
 [build]
   command = "./netlify-build.sh"
-  publish = ".next"
+  publish = "out"
 
-# Plugin disabled because Next.js builds successfully without it
+# Plugin disabled because we're using static exports
 # [[plugins]]
 #   package = "@netlify/plugin-nextjs"
