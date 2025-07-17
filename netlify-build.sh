@@ -25,19 +25,21 @@ if [ -f tsconfig.json ]; then
   echo "TypeScript config backed up."
 fi
 
-# Create a simplified next.config.js that disables TypeScript checking
+# Create a simplified next.config.js for static export
 cat > next.config.js << 'EOL'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  output: 'export',
+  distDir: 'out',
+  images: {
+    unoptimized: true,
+    domains: ['img.clerk.com'],
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true
-  },
-  images: {
-    domains: ['img.clerk.com'],
   },
   env: {
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: '/sign-in',
@@ -50,7 +52,7 @@ const nextConfig = {
 module.exports = nextConfig;
 EOL
 
-# Install ALL dependencies including dev dependencies (critical for TypeScript)
+# Install ALL dependencies including dev dependencies
 echo "Installing all dependencies (including devDependencies)..."
 npm ci
 
@@ -58,16 +60,60 @@ npm ci
 echo "Installing TypeScript dependencies explicitly..."
 npm install --no-save typescript@5 @types/react@18 @types/node@20 @types/react-dom@18
 
-# Ensure the Netlify plugin is properly installed
-echo "Installing Netlify plugin..."
-npm install --no-save @netlify/plugin-nextjs@5.11.6
-
-# Build with Next.js
-echo "Building with Next.js..."
+# Build with Next.js static export
+echo "Building with Next.js static export..."
 NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 # Check build result
 BUILD_STATUS=$?
+if [ $BUILD_STATUS -ne 0 ]; then
+  echo "Build failed with exit code $BUILD_STATUS"
+  # Clean up before exiting
+  if [ -f tsconfig.json.backup ]; then
+    mv tsconfig.json.backup tsconfig.json
+  fi
+  if [ -f next.config.js.orig ]; then
+    mv next.config.js.orig next.config.js
+  fi
+  if [ -f next.config.ts.orig ]; then
+    mv next.config.ts.orig next.config.ts
+  fi
+  exit $BUILD_STATUS
+fi
+
+# Verify the output directory exists and has content
+echo "Verifying output directory..."
+if [ ! -d "out" ]; then
+  echo "ERROR: Output directory 'out' not found"
+  # Clean up before exiting
+  if [ -f tsconfig.json.backup ]; then
+    mv tsconfig.json.backup tsconfig.json
+  fi
+  if [ -f next.config.js.orig ]; then
+    mv next.config.js.orig next.config.js
+  fi
+  if [ -f next.config.ts.orig ]; then
+    mv next.config.ts.orig next.config.ts
+  fi
+  exit 1
+fi
+
+if [ ! "$(ls -A out 2>/dev/null)" ]; then
+  echo "ERROR: Output directory 'out' is empty"
+  # Clean up before exiting
+  if [ -f tsconfig.json.backup ]; then
+    mv tsconfig.json.backup tsconfig.json
+  fi
+  if [ -f next.config.js.orig ]; then
+    mv next.config.js.orig next.config.js
+  fi
+  if [ -f next.config.ts.orig ]; then
+    mv next.config.ts.orig next.config.ts
+  fi
+  exit 1
+fi
+
+echo "Static export generated successfully in 'out' directory"
 
 # Restore the original tsconfig.json
 if [ -f tsconfig.json.backup ]; then
