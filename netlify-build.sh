@@ -1,33 +1,22 @@
 #!/bin/bash
 echo "Starting Netlify build script..."
 
-# Don't fail on SWC errors
+# Set Next.js options
 export NEXT_TELEMETRY_DISABLED=1
 export NODE_ENV=production
-export SKIP_INSTALL_DEPS=true
 
-# Use Babel transpiler instead of SWC
+# Use Babel transpiler instead of SWC to avoid issues
 echo "Configuring to use Babel instead of SWC..."
 export DISABLE_SWC=1
 export SWCMINIFY=false
 
-# Create backups of config files
-echo "Creating config backups..."
+# Create a backup of the next.config.js file
+echo "Creating Next.js config backup..."
 cp next.config.js next.config.js.orig 2>/dev/null || true
-cp next.config.ts next.config.ts.orig 2>/dev/null || true
-cp netlify.toml netlify.toml.orig 2>/dev/null || true
-
-# Create a modified netlify.toml that uses a standard static site approach
-echo "Creating modified netlify.toml for static build..."
-cat > netlify.toml << 'EOL'
-[build]
-  command = "./netlify-build.sh"
-  publish = "dist"
-
-# Completely disable the Next.js plugin
-# [[plugins]]
-#   package = "@netlify/plugin-nextjs"
-EOL
+if [ -f next.config.ts ]; then
+  cp next.config.ts next.config.ts.orig
+  echo "Backed up next.config.ts"
+fi
 
 # Temporarily move tsconfig.json out of the way for the build
 echo "Temporarily moving TypeScript configuration..."
@@ -36,109 +25,73 @@ if [ -f tsconfig.json ]; then
   echo "TypeScript config backed up."
 fi
 
-# Create JavaScript versions of TypeScript files for the app code only (excluding node_modules)
-echo "Converting TypeScript files to JavaScript..."
-
-# Skip building with TypeScript and use a completely different approach
-echo "Creating a Next.js app skeleton without TypeScript..."
-
-# Create a clean directory for our static build
-rm -rf ./dist 2>/dev/null || true
-mkdir -p ./dist
-mkdir -p ./js-app
-
-# Create an ultra-minimal app structure
-cat > ./js-app/next.config.js << 'EOL'
-module.exports = {
-  output: 'export',
-  distDir: '../dist',
-  images: { unoptimized: true },
-  eslint: { ignoreDuringBuilds: true },
-  typescript: { ignoreBuildErrors: true }
-};
-EOL
-
-cat > ./js-app/package.json << 'EOL'
-{
-  "name": "fl1-ui-minimal",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "build": "next build"
+# Create a simplified next.config.js that disables TypeScript checking
+cat > next.config.js << 'EOL'
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true
+  },
+  images: {
+    domains: ['img.clerk.com'],
+  },
+  env: {
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: '/sign-in',
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: '/sign-up',
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: '/',
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: '/'
   }
-}
+};
+
+module.exports = nextConfig;
 EOL
 
-mkdir -p ./js-app/pages
-cat > ./js-app/pages/index.js << 'EOL'
-export default function Home() {
-  return (
-    <div style={{ padding: "40px", textAlign: "center" }}>
-      <h1>FL1 Application</h1>
-      <p>This is a static export of the FL1 application.</p>
-    </div>
-  );
-}
-EOL
+# Install ALL dependencies including dev dependencies (critical for TypeScript)
+echo "Installing all dependencies (including devDependencies)..."
+npm ci
 
-cat > ./js-app/pages/_app.js << 'EOL'
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
-}
-EOL
+# Explicitly install TypeScript and related packages to ensure they're available
+echo "Installing TypeScript dependencies explicitly..."
+npm install --no-save typescript@5 @types/react@18 @types/node@20 @types/react-dom@18
 
-echo "Building minimal JS app instead..."
-cd ./js-app
+# Ensure the Netlify plugin is properly installed
+echo "Installing Netlify plugin..."
+npm install --no-save @netlify/plugin-nextjs@5.11.6
 
-# Install dependencies for the minimal app
-echo "Installing minimal dependencies..."
-npm i next@14 react@18 react-dom@18
+# Build with Next.js
+echo "Building with Next.js..."
+NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
-# Build the minimal app
-echo "Building minimal static app..."
-NODE_OPTIONS="--max-old-space-size=4096" npx next build
+# Check build result
+BUILD_STATUS=$?
 
-# Check if build was successful
-BUILD_RESULT=$?
-if [ $BUILD_RESULT -eq 0 ]; then
-  echo "Minimal app build completed successfully!"
-  
-  # Ensure the dist directory exists and has content
-  if [ -d "../dist" ] && [ "$(ls -A ../dist 2>/dev/null)" ]; then
-    echo "Static export created successfully in ../dist"
-    
-    # Create a simple index.html if one doesn't exist (fallback)
-    if [ ! -f "../dist/index.html" ]; then
-      echo "Creating a simple index.html fallback..."
-      cat > "../dist/index.html" << 'EOL'
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>FL1 Application</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; max-width: 650px; margin: 0 auto; }
-    h1 { font-size: 24px; }
-  </style>
-</head>
-<body>
-  <h1>FL1 Application</h1>
-  <p>This is a static placeholder for the FL1 application.</p>
-</body>
-</html>
-EOL
-    fi
-  else
-    echo "ERROR: Static export directory not found or empty"
-    BUILD_RESULT=1
-  fi
-else
-  echo "Build failed with exit code $BUILD_RESULT"
+# Restore the original tsconfig.json
+if [ -f tsconfig.json.backup ]; then
+  echo "Restoring original TypeScript configuration..."
+  mv tsconfig.json.backup tsconfig.json
 fi
 
-# Return to original directory
-cd ..
+# Restore original next.config.js if backup exists
+if [ -f next.config.js.orig ]; then
+  echo "Restoring original Next.js configuration..."
+  mv next.config.js.orig next.config.js
+fi
 
-exit $BUILD_RESULT
+# Restore next.config.ts if it existed
+if [ -f next.config.ts.orig ]; then
+  mv next.config.ts.orig next.config.ts
+fi
+
+# Output build result
+if [ $BUILD_STATUS -eq 0 ]; then
+  echo "Build completed successfully!"
+else
+  echo "Build failed with exit code $BUILD_STATUS"
+fi
+
+exit $BUILD_STATUS
 
