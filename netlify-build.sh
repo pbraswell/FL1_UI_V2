@@ -6,31 +6,63 @@ echo "Starting Netlify build script..."
 export NEXT_TELEMETRY_DISABLED=1
 export NODE_ENV=production
 
+# Set Node options for more memory
+export NODE_OPTIONS="--max-old-space-size=4096"
+
 # Use Babel transpiler instead of SWC to avoid issues
 echo "Configuring to use Babel instead of SWC..."
 export DISABLE_SWC=1
 export SWCMINIFY=false
 
-# Back up configuration files
-echo "Creating configuration backups..."
-if [ -f next.config.js ]; then
-  cp next.config.js next.config.js.backup
-fi
-if [ -f next.config.ts ]; then
-  cp next.config.ts next.config.ts.backup
-fi
+# Create package.json backup
+echo "Creating package.json backup..."
+cp package.json package.json.backup
 
-# Install ALL dependencies including dev dependencies
-echo "Installing all dependencies (including devDependencies)..."
-npm ci
+# Modify package.json to move TypeScript dependencies from devDependencies to dependencies
+echo "Ensuring TypeScript is in main dependencies..."
+node -e '
+const fs = require("fs");
+const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
 
-# Explicitly install TypeScript and related packages to ensure they're available
-echo "Installing TypeScript dependencies explicitly..."
-npm install typescript@5 @types/react@18 @types/node@20 @types/react-dom@18 --no-save
+// Dependencies to move
+const depsToMove = [
+  "typescript",
+  "@types/react",
+  "@types/node",
+  "@types/react-dom"
+];
 
-# Ensure the Netlify plugin is properly installed
-echo "Installing Netlify plugin..."
-npm install @netlify/plugin-nextjs@5.11.6 --no-save
+// Ensure dependencies section exists
+if (!pkg.dependencies) pkg.dependencies = {};
+
+// Move dependencies from devDependencies to dependencies
+if (pkg.devDependencies) {
+  depsToMove.forEach(dep => {
+    if (pkg.devDependencies[dep]) {
+      pkg.dependencies[dep] = pkg.devDependencies[dep];
+      delete pkg.devDependencies[dep];
+    }
+  });
+}
+
+// Make sure the deps exist
+pkg.dependencies.typescript = pkg.dependencies.typescript || "^5.0.0";
+pkg.dependencies["@types/react"] = pkg.dependencies["@types/react"] || "^18.0.0";
+pkg.dependencies["@types/node"] = pkg.dependencies["@types/node"] || "^20.0.0";
+pkg.dependencies["@types/react-dom"] = pkg.dependencies["@types/react-dom"] || "^18.0.0";
+
+// Write the modified package.json
+fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2));
+console.log("Updated package.json to include TypeScript in main dependencies");
+'
+
+# Install dependencies with a clean slate
+echo "Cleaning node_modules..."
+rm -rf node_modules
+rm -rf .next
+
+echo "Installing ALL dependencies..."
+npm install
 
 # Create optimized Next.js configuration that preserves TypeScript but ignores errors
 echo "Creating optimized Next.js configuration..."
@@ -52,60 +84,42 @@ const nextConfig = {
 module.exports = nextConfig;
 EOL
 
-# Create a .npmrc to ensure Netlify uses the correct Node version
-echo "Creating .npmrc for consistent Node version..."
-cat > .npmrc << 'EOL'
-engine-strict=true
-EOL
-
-# Create a .node-version file to specify the Node version
-echo "Creating .node-version file..."
-cat > .node-version << 'EOL'
-18.19.0
-EOL
-
-# Verify the Netlify plugin is installed and has a package.json
-if [ ! -d "node_modules/@netlify/plugin-nextjs" ]; then
-  echo "Creating Netlify plugin directory structure..."
-  mkdir -p "node_modules/@netlify/plugin-nextjs"
-  
-  # Create a minimal package.json for the plugin if needed
-  if [ ! -f "node_modules/@netlify/plugin-nextjs/package.json" ]; then
-    echo "Creating minimal package.json for Netlify plugin..."
-    cat > "node_modules/@netlify/plugin-nextjs/package.json" << 'EOL'
+# Create .babelrc to ensure proper transpilation
+echo "Creating .babelrc file..."
+cat > .babelrc << 'EOL'
 {
-  "name": "@netlify/plugin-nextjs",
-  "version": "5.11.6",
-  "main": "dist/index.js"
+  "presets": ["next/babel"]
 }
 EOL
-    # Create minimal structure
-    mkdir -p "node_modules/@netlify/plugin-nextjs/dist"
-    cat > "node_modules/@netlify/plugin-nextjs/dist/index.js" << 'EOL'
-module.exports = {
-  onPreBuild: () => { console.log('Netlify Next.js plugin initialized'); }
-};
-EOL
-  fi
+
+# Verify TypeScript is installed
+echo "Verifying TypeScript installation..."
+if [ -f "./node_modules/typescript/package.json" ]; then
+  echo "TypeScript is properly installed"
+  ls -la ./node_modules/typescript
+  echo "TypeScript version:"
+  node_modules/.bin/tsc --version
+else
+  echo "TypeScript not found! Installing again directly..."
+  npm install typescript@5 --no-save
+  npm install @types/react@18 --no-save
+  npm install @types/node@20 --no-save
+  npm install @types/react-dom@18 --no-save
 fi
 
-# Build the Next.js application
+# Build the application
 echo "Building Next.js application..."
-NODE_OPTIONS="--max-old-space-size=4096" npm run build
+npm run build
 
 # Check build result
 BUILD_STATUS=$?
+
+# Restore original package.json
+echo "Restoring original package.json..."
+mv package.json.backup package.json
+
 if [ $BUILD_STATUS -ne 0 ]; then
   echo "Build failed with exit code $BUILD_STATUS"
-
-  # Restore configuration files
-  if [ -f next.config.js.backup ]; then
-    mv next.config.js.backup next.config.js
-  fi
-  if [ -f next.config.ts.backup ]; then
-    mv next.config.ts.backup next.config.ts
-  fi
-  
   exit $BUILD_STATUS
 fi
 
@@ -113,15 +127,6 @@ fi
 if [ ! -d ".next" ] || [ ! "$(ls -A .next 2>/dev/null)" ]; then
   echo "ERROR: .next directory missing or empty"
   exit 1
-fi
-
-# Restore configuration files
-echo "Restoring original configuration files..."
-if [ -f next.config.js.backup ]; then
-  mv next.config.js.backup next.config.js
-fi
-if [ -f next.config.ts.backup ]; then
-  mv next.config.ts.backup next.config.ts
 fi
 
 echo "Build completed successfully!"
