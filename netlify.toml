@@ -1,7 +1,8 @@
 [build]
   command = "./netlify-build.sh"
-  publish = "out"
+  publish = ".next"
 
-# Plugin disabled due to persistent errors
-# [[plugins]]
-#   package = "@netlify/plugin-nextjs"
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+    # No additional inputs to avoid potential configuration conflicts
