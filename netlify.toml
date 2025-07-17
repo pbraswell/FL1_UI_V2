@@ -2,6 +2,6 @@
   command = "./netlify-build.sh"
   publish = ".next"
 
-# Re-enable the plugin for proper server-side rendering support
+# Plugin now added directly to package.json dependencies
 [[plugins]]
   package = "@netlify/plugin-nextjs"

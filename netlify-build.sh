@@ -112,9 +112,20 @@ npm run build
 # Check build result
 BUILD_STATUS=$?
 
-# Restore original package.json
-echo "Restoring original package.json..."
+# Merge back original package.json but keep the plugin
+echo "Merging back original package.json while preserving plugin..."
+# First, extract the plugin version from current package.json
+PLUGIN_VERSION=$(node -e "console.log(require('./package.json').dependencies['@netlify/plugin-nextjs'] || '5.11.6')")
+
+# Now restore the original package.json
 mv package.json.backup package.json
+
+# Add the plugin to the restored package.json
+echo "Adding Netlify plugin to package.json permanently..."
+node -e "const fs=require('fs');const pkg=JSON.parse(fs.readFileSync('./package.json'));pkg.dependencies=pkg.dependencies||{};pkg.dependencies['@netlify/plugin-nextjs']='$PLUGIN_VERSION';fs.writeFileSync('./package.json',JSON.stringify(pkg,null,2));"
+
+# Install plugin again to make sure it's available in node_modules
+npm install --no-save
 
 if [ $BUILD_STATUS -ne 0 ]; then
   echo "Build failed with exit code $BUILD_STATUS"
