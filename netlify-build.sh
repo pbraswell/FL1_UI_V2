@@ -63,8 +63,7 @@ rm -rf .next
 echo "Installing ALL dependencies..."
 npm install
 
-# Create optimized Next.js configuration that preserves TypeScript but ignores errors
-echo "Creating optimized Next.js configuration with static export..."
+# Create optimized Next.js configuration for server-side rendering...
 cat > next.config.js << 'EOL'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -77,12 +76,8 @@ const nextConfig = {
   },
   images: {
     domains: ['img.clerk.com'],
-    unoptimized: true,
   },
   swcMinify: true,
-  output: 'export',
-  // Required for static export with dynamic routes
-  trailingSlash: true,
 };
 
 module.exports = nextConfig;
@@ -91,8 +86,9 @@ EOL
 # Do NOT create .babelrc as it conflicts with next/font
 echo "Skipping .babelrc creation to allow SWC to handle fonts..."
 
-# Skip installing the Netlify plugin since we've disabled it in netlify.toml
-echo "Skipping Netlify plugin installation (disabled in netlify.toml)..."
+# Install the Netlify plugin properly since it's enabled in netlify.toml
+echo "Installing Netlify plugin properly..."
+npm install @netlify/plugin-nextjs@5.11.6 --save
 
 # Verify TypeScript is installed
 echo "Verifying TypeScript installation..."
@@ -109,8 +105,8 @@ else
   npm install @types/react-dom@18 --no-save
 fi
 
-# Build the application with static export
-echo "Building Next.js application with static export..."
+# Build the application with SSR
+echo "Building Next.js application with SSR..."
 npm run build
 
 # Check build result
@@ -125,29 +121,14 @@ if [ $BUILD_STATUS -ne 0 ]; then
   exit $BUILD_STATUS
 fi
 
-# Verify out directory exists and has content
-if [ ! -d "out" ] || [ ! "$(ls -A out 2>/dev/null)" ]; then
-  echo "ERROR: static export 'out' directory missing or empty"
+# Verify .next directory exists and has content
+if [ ! -d ".next" ] || [ ! "$(ls -A .next 2>/dev/null)" ]; then
+  echo "ERROR: .next directory missing or empty"
   exit 1
 fi
 
-# Create a Netlify _redirects file for SPA routing
-echo "Creating Netlify _redirects file for client-side routing..."
-cat > out/_redirects << 'EOL'
-# Netlify redirects file
-# Redirect all routes to index.html for client-side routing
-/*    /index.html   200
-EOL
-
-# Create a netlify.toml in the output directory to ensure redirects work
-echo "Creating netlify.toml in output directory..."
-cat > out/netlify.toml << 'EOL'
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = true
-EOL
+# No need for redirects files with server-side rendering
+echo "Using server-side rendering with Netlify plugin, no redirects needed..."
 
 echo "Build completed successfully!"
 exit 0

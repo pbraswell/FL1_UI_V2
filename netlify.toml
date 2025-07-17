@@ -1,7 +1,7 @@
 [build]
   command = "./netlify-build.sh"
-  publish = "out"
+  publish = ".next"
 
-# Plugin disabled because we're using static exports
-# [[plugins]]
-#   package = "@netlify/plugin-nextjs"
+# Re-enable the plugin for proper server-side rendering support
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
