@@ -50,9 +50,9 @@ const nextConfig = {
 module.exports = nextConfig;
 EOL
 
-# Install only production dependencies to avoid SWC issues
-echo "Installing only production dependencies..."
-npm ci --only=production
+# Install all dependencies including TypeScript
+echo "Installing all dependencies..."
+npm ci
 
 # Install specific versions of required packages
 echo "Installing critical dependencies..."
