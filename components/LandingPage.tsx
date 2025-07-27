@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { SignedIn, SignedOut, useAuth, SignInButton, UserButton } from "@clerk/nextjs";
@@ -8,6 +9,14 @@ import styles from "./LandingPage.module.css";
 
 const LandingPage = () => {
   const { isSignedIn } = useAuth();
+  const router = useRouter();
+  
+  // Redirect to dashboard if user is already signed in
+  useEffect(() => {
+    if (isSignedIn) {
+      router.push('/dashboard');
+    }
+  }, [isSignedIn, router]);
   
   const onBlogTextClick = useCallback(() => {
     window.open("https://blog.flightlevelone.io", "_blank");
