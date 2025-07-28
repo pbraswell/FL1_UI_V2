@@ -1,0 +1,214 @@
+:root {
+  --color-lightgray: #f5f5f5;
+  --color-slategray-100: #576e84;
+  --color-slategray-200: #505e71;
+  --color-white: #fff;
+  --color-lightpink: #ff9999;
+  --gap-18: 18px;
+  --padding-8: 8px;
+  --padding-12: 12px;
+  --padding-14: 14px;
+  --padding-40: 40px;
+  --br-8: 8px;
+}
+
+.pilotDashboardChild {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.fl1BlogAnd {
+  position: relative;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  font-family: Inter;
+  color: var(--color-white);
+  text-align: left;
+}
+
+.crosswindExposure,
+.fl1BlogAndPodcast {
+  cursor: pointer;
+  border: 0;
+  padding: var(--padding-14) var(--padding-12);
+  background-color: var(--color-slategray-200);
+  align-self: stretch;
+  border-radius: var(--br-8);
+  height: 45px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  gap: var(--gap-18);
+}
+
+.fl1BlogAndPodcast {
+  background-color: var(--color-slategray-200);
+  width: 260px;
+  border-radius: var(--br-8);
+}
+
+.uploadLogbook {
+  cursor: pointer;
+  border: 0;
+  padding: var(--padding-14) var(--padding-12);
+  background-color: var(--color-slategray-200);
+  align-self: stretch;
+  border-radius: var(--br-8);
+  height: 45px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  gap: var(--gap-18);
+  color: var(--color-white);
+}
+
+.leftNavFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--color-slategray-100);
+  width: 342px;
+  height: 939px;
+}
+
+.container {
+  align-self: stretch;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+  gap: 14px;
+  max-width: 100%;
+}
+
+.dayTimeWindow,
+.experienceSummary {
+  height: 350px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-white);
+}
+
+.experienceSummary {
+  width: 500px;
+  border-radius: var(--br-8);
+  flex-shrink: 0;
+}
+
+.dayTimeWindow {
+  flex: 1;
+  border-radius: var(--br-8);
+}
+
+.smallCards {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+.pilotDashboard {
+  position: absolute;
+  width: calc(100% - 342px);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 342px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 73px 133px 75px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.logoIcon {
+  position: absolute;
+  top: 36px;
+  left: 74px;
+  width: 194px;
+  height: 75px;
+  object-fit: cover;
+}
+
+.logout,
+.mainNavigationMenu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+.logout {
+  cursor: pointer;
+  border: 0;
+  padding: var(--padding-14) var(--padding-12);
+  background-color: var(--color-lightpink);
+  width: 144px;
+  border-radius: var(--br-8);
+  height: 45px;
+  flex-direction: row;
+  gap: var(--gap-18);
+}
+
+.mainNavigationMenu {
+  position: absolute;
+  top: 193px;
+  left: 22px;
+  background-color: var(--color-slategray-100);
+  width: 298px;
+  height: 701px;
+  overflow: hidden;
+  flex-direction: column;
+  padding: 11px 19px;
+  gap: 11px;
+}
+
+.dashboard {
+  width: 1381px;
+  background-color: var(--color-lightgray);
+  max-width: 100%;
+  height: 939px;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 1200px) {
+  .experienceSummary {
+    width: 100%;
+  }
+  .smallCards {
+    flex: unset;
+    align-self: stretch;
+  }
+  .container {
+    flex-direction: column;
+  }
+  .pilotDashboard {
+    padding-left: var(--padding-40);
+    padding-right: var(--padding-40);
+    box-sizing: border-box;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .dayTimeWindow {
+    flex-direction: column;
+  }
+}
