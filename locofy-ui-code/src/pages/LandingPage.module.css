@@ -1,0 +1,92 @@
+.home {
+  width: 3.238rem;
+}
+.blog,
+.home,
+.login {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.blog {
+  text-decoration: none;
+  width: 5.794rem;
+  color: inherit;
+}
+.login {
+  width: 5.594rem;
+}
+.menu,
+.topHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.menu {
+  justify-content: flex-start;
+  gap: 1.875rem;
+}
+.topHeader {
+  width: 100%;
+  background-color: var(--color-slategray-100);
+  height: 4.813rem;
+  justify-content: space-between;
+  padding: 1.375rem 5rem;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  text-align: center;
+  font-size: var(--font-size-16);
+  color: var(--color-white);
+  font-family: var(--font-roboto);
+}
+.logoIcon {
+  width: 18.563rem;
+  height: 16.938rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+.heroFrame,
+.landingPage {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.heroFrame {
+  align-self: stretch;
+  height: 43.625rem;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.562rem;
+  background-image: url(/public/hero-frame@3x.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+.landingPage {
+  width: 100%;
+  position: relative;
+  background-color: var(--color-white);
+  height: 58.688rem;
+  align-items: flex-start;
+}
+@media screen and (max-width: 1200px) {
+  .topHeader {
+    padding-left: var(--padding-40);
+    padding-right: var(--padding-40);
+    box-sizing: border-box;
+  }
+}
+@media screen and (max-width: 960px) {
+  .menu {
+    display: none;
+  }
+  .topHeader {
+    padding-left: var(--padding-24);
+    padding-right: var(--padding-24);
+    box-sizing: border-box;
+  }
+}

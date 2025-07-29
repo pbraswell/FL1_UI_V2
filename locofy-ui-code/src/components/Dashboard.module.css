@@ -1,0 +1,100 @@
+.leftNavFrame {
+  width: 21.375rem;
+  position: relative;
+  border-radius: var(--br-8);
+  background-color: var(--color-slategray-200);
+  height: 58.688rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 0;
+}
+.dayTimeWindow,
+.experienceSummary {
+  align-self: stretch;
+  flex: 0.9108;
+  border-radius: 10.5px;
+  background-color: var(--color-darkslategray-200);
+  overflow: hidden;
+}
+.dayTimeWindow {
+  flex: 1;
+}
+.container,
+.smallCards {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.smallCards {
+  align-self: stretch;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.937rem;
+}
+.container {
+  width: 60.188rem;
+  height: 53.313rem;
+  flex-direction: row;
+  gap: 1.312rem;
+}
+.logoIcon,
+.pilotDashboard {
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.pilotDashboard {
+  width: 63.813rem;
+  box-shadow: 0 0 52.6px rgba(0, 0, 0, 0.03);
+  background-color: var(--color-lightgray);
+  height: 58.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3.125rem 6.062rem;
+  box-sizing: border-box;
+  z-index: 1;
+}
+.logoIcon {
+  width: 11.188rem;
+  margin: 0 !important;
+  position: absolute;
+  top: 0.875rem;
+  left: 5.125rem;
+  height: 13.125rem;
+  object-fit: cover;
+  z-index: 2;
+}
+.dashboard {
+  position: relative;
+  background-color: var(--color-lightgray);
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.625rem;
+}
+@media screen and (max-width: 1200px) {
+  .experienceSummary {
+    width: 100%;
+  }
+  .smallCards {
+    flex: unset;
+    align-self: stretch;
+  }
+  .container {
+    flex-direction: column;
+  }
+  .pilotDashboard {
+    padding-left: var(--padding-40);
+    padding-right: var(--padding-40);
+    box-sizing: border-box;
+  }
+}
+@media screen and (max-width: 960px) {
+  .dayTimeWindow {
+    flex-direction: column;
+  }
+}

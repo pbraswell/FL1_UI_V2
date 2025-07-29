@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+body {
+  margin: 0;
+  line-height: normal;
+}
+:root {
+  /* Color */
+  --color-white: #fff;
+  --color-lightpink: #feadad;
+  --color-lightblue: #c7e9ff;
+  --color-darkslategray-200: #183251;
+  --color-darkslategray-100: #3a4254;
+  --color-slategray-200: #6c747c;
+  --color-slategray-100: #597f97;
+  --color-lightgray: #c4cbd8;
+
+  /* Gap */
+  --gap-11: 0.687rem;
+  --gap-18: 1.125rem;
+
+  /* Padding */
+  --padding-11: 0.687rem;
+  --padding-12: 0.75rem;
+  --padding-14: 0.875rem;
+  --padding-19: 1.187rem;
+  --padding-24: 1.5rem;
+  --padding-40: 2.5rem;
+
+  /* BorderRadius */
+  --br-8: 8px;
+
+  /* Font */
+  --font-roboto: Roboto;
+  --font-inter: Inter;
+
+  /* FontSize */
+  --font-size-16: 1rem;
+
+  /* Figma Variables */
+
+  /* Color */
+  --Gray: #676f82;
+}
