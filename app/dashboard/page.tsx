@@ -2,11 +2,12 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, SignOutButton } from '@clerk/nextjs';
-import Link from 'next/link';
-import DashboardComponent from '../../components/Dashboard';
+import { useAuth } from '@clerk/nextjs';
+import '../../styles/locofy-globals.css';
+import '../../locofy-ui-code/src/global.css';
+import LocofyDashboardAdapter from '../../components/LocofyDashboardAdapter';
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
@@ -27,9 +28,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      {/* Render the Locofy Dashboard component */}
-      <DashboardComponent />
-    </div>
+    <>
+      {/* Use adapter component to render the Locofy dashboard */}
+      <LocofyDashboardAdapter />
+    </>
   );
 }
